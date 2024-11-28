@@ -1,0 +1,31 @@
+const User = require('../model/User');
+const bcrypt = require('bcrypt')
+const ValidatorSchema = require('../helpers/validator-schema')
+
+
+class UserController{
+    async create(req, res){
+        const validator = new ValidatorSchema();
+        try {
+            const validationResult = await validator.createUserSchema.validateAsync(req.body);
+            const {email, first_name, last_name,password} = validationResult;
+            // check for duplicate
+            const existingUser = await User.findOne({email}).exec();
+            if(existingUser)return res.status(409).send({error: true,'message':'EMail already taken'});
+            const hashpwd = await bcrypt.hash(password, 10);
+            const newUser = await User.create({
+                email,
+                first_name,
+                last_name,
+                password: hashpwd,
+            })
+            console.log(newUser);
+            res.status(201).send({'message': 'New user created'})
+        } catch (err) {
+            console.log(err.message);
+            res.status(500).json({error: true,  message: err.message });
+        }
+    }
+}
+
+module.exports = UserController
