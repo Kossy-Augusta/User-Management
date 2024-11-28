@@ -1,7 +1,7 @@
 const User = require('../model/User');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+const sendResponse = require('../utils/sendResponse')
 
 class UserController{
     async create(req, res){
@@ -23,7 +23,7 @@ class UserController{
                 first_name: newUser.first_name,
                 last_name: newUser.last_name
             }
-            this.sendResponse(res, 201, `New user created!!`, data);
+            sendResponse(res, 201, `New user created!!`, data);
         } catch (err) {
             console.log(err.message);
             res.status(err.status || 500).json({ error: true, message: err.message });
@@ -39,7 +39,8 @@ class UserController{
 
             const verifyPassword = await bcrypt.compare(password, currentUser.password);
             if (!verifyPassword) return res.status(401).send({error:true, message: "Incorrect password"});
-            const roles = Object.values(currentUser.roles);
+            const roles = currentUser.roles;
+            
             // create JWT
             const accessToken = jwt.sign(
                 {
@@ -57,7 +58,7 @@ class UserController{
                     userInfo: {
                         first_name: currentUser.first_name,
                         last_name: currentUser.last_name,
-                        roles
+                        roles: roles
                     }
                 },
                 process.env.REFRESH_TOKEN_SECRET,
@@ -84,10 +85,10 @@ class UserController{
                 first_name: currentUser.first_name,
                 last_name: currentUser.last_name,
             }]
-            this.sendResponse(res, 200, `User login Successful`, data)
+            sendResponse(res, 200, `User login Successful`, data)
         } catch (error) {
             const statusCode = error.statusCode || 500;
-            this.sendResponse(res, statusCode, error.message, null, true);
+            sendResponse(res, statusCode, error.message, null, true);
         }
     }
 
@@ -123,17 +124,6 @@ class UserController{
             res.status(statusCode).send({message: err.message})
         }
         
-    }
-
-    sendResponse(res, statusCode, message, data = null, error = false) {
-        const response = {
-            status: error ? 'error' : 'success',
-            data: data || null,
-            message,
-            error: error || false,
-        };
-
-        return res.status(statusCode).json(response);
     }
 }
 
