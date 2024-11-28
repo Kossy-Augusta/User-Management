@@ -10,6 +10,7 @@ const verifyJWT = (req,res,next)=>{
         if (err) return res.status(403).send({message: err.message})
         req.first_name = decoded.userInfo.first_name;
         req.last_name = decoded.userInfo.last_name;
+        req.roles = decoded.userInfo.roles;
     })
     next();
 }
