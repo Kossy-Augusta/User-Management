@@ -6,6 +6,6 @@ const UserController = require('../controllers/authController');
 
 const validator = new ValidatorSchema();
 const userController = new UserController();
-router.post("/",validateReqBody(validator.createUserSchema), userController.create.bind(userController));
+router.post("/register",validateReqBody(validator.createUserSchema), userController.create.bind(userController));
 
 module.exports = router
