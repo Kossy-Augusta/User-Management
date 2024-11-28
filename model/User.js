@@ -23,7 +23,11 @@ const userSchema = new Schema({
     enum: ['User', 'Admin', 'Editor'],
     default: ['User']  // Default role is 'User'
     },
-    refresh_token: String
+    refresh_token: {
+    type: String,
+    required: false,
+    default: "",
+},
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 
 module.exports = mongoose.model('User', userSchema)
