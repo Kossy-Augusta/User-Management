@@ -11,8 +11,8 @@ const verifyJWT = (req,res,next)=>{
         req.first_name = decoded.userInfo.first_name;
         req.last_name = decoded.userInfo.last_name;
         req.roles = decoded.userInfo.roles;
+        next();
     })
-    next();
 }
 
 module.exports = verifyJWT;
