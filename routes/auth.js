@@ -10,5 +10,6 @@ const userController = new UserController();
 router.post("/register",validateReqBody(validator.createUserSchema), userController.create);
 router.post("/login",validateReqBody(validator.loginUserSchema), userController.login);
 router.get("/logout", verifyJWT, userController.logout);
+router.get("/refresh", userController.refreshToken)
 
 module.exports = router
